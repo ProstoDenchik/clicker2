@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Кликер</title>
+    <style>
+        :root {
+            --primary: #6c5ce7;
+            --secondary: #a29bfe;
+            --bg: #e5e0ea;
+            --card-bg: #ffffff;
+            --text: #2d3436;
+            --accent: #00b894;
+            --danger: #d63031;
+            background-image: "maxresdefault.jpg";
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            width: 100%;
+            padding: 20px 0;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        h1 { margin: 0; font-size: 2.5rem; }
+
+        .container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            max-width: 1000px;
+            width: 90%;
+            margin: 20px auto;
+        }
+
+        @media (max-width: 768px) {
+            .container { grid-template-columns: 1fr; }
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            text-align: center;
+        }
+
+        .score-display {
+            font-size: 3rem;
+            font-weight: bold;
+            color: var(--primary);
+            margin: 20px 0;
+        }
+
+        .click-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: transform 0.1s, box-shadow 0.1s;
+            box-shadow: 0 10px 20px rgba(108, 92, 231, 0.3);
+            user-select: none;
+            outline: none;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .click-btn:active {
+            transform: scale(0.95);
+            box-shadow: 0 5px 10px rgba(108, 92, 231, 0.3);
+        }
+
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 20px;
+            font-size: 1.1rem;
+        }
+
+        .shop-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #f1f2f6;
+            margin: 10px 0;
+            padding: 15px;
+            border-radius: 10px;
+            transition: background 0.2s;
+        }
+
+        .shop-item:hover { background: #e1e2e6; }
+
+        .buy-btn {
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .buy-btn:disabled {
+            background: #b2bec3;
+            cursor: not-allowed;
+        }
+
+        .records-list {
+            list-style: none;
+            padding: 0;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .record-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .record-item:first-child {
+            color: var(--primary);
+            font-weight: bold;
+            background: #f8f9fa;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        input {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            flex: 1;
+        }
+
+        .save-record-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .reset-btn {
+            background: var(--danger);
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+            font-size: 0.8rem;
+        }
+
+        .floating-text {
+            position: absolute;
+            color: var(--text);
+            font-weight: bold;
+            font-size: 1.2rem;
+            pointer-events: none;
+            animation: floatUp 1s ease-out forwards;
+        }
+
+        @keyframes floatUp {
+            0% { opacity: 1; transform: translateY(0); }
+            100% { opacity: 0; transform: translateY(-50px); }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>💰 Супер Кликер</h1>
+    <p>Кликай, зарабатывай, ставь рекорды!</p>
+</header>
+
+<div class="container">
+    <div class="card">
+        <h2>Игра</h2>
+        <div class="score-display"><span id="score">0</span> 💰</div>
+
+        <button class="click-btn" id="clickBtn">КЛИК!</button>
+
+        <div class="stats">
+            <div>Сила клика: <span id="clickPower">1</span></div>
+            <div>Авто-доход: <span id="autoIncome">0</span>/сек</div>
+        </div>
+
+        <button class="reset-btn" onclick="resetGame()">Сбросить прогресс</button>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 20px;">
+        <div class="card">
+            <h2>🏪 Магазин</h2>
+            <div class="shop-item">
+                <div>
+                    <strong>Усиление клика</strong><br>
+                    <small>+1 к силе</small>
+                </div>
+                <button class="buy-btn" id="buyClick" onclick="buyUpgrade('click')">15 💰</button>
+            </div>
+            <div class="shop-item">
+                <div>
+                    <strong>Авто-кликер</strong><br>
+                    <small>+1 / сек</small>
+                </div>
+                <button class="buy-btn" id="buyAuto" onclick="buyUpgrade('auto')">50 💰</button>
+            </div>
+            <div class="shop-item">
+                <div>
+                    <strong>Мега ферма</strong><br>
+                    <small>+10 / сек</small>
+                </div>
+                <button class="buy-btn" id="buyMega" onclick="buyUpgrade('mega')">500 💰</button>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>🏆 Зал славы</h2>
+            <div class="input-group">
+                <input type="text" id="playerName" placeholder="Ваше имя" maxlength="10">
+                <button class="save-record-btn" onclick="saveRecord()">Сохранить</button>
+            </div>
+            <ul class="records-list" id="recordsList">
+            </ul>
+        </div>
+    </div>
+</div>
+
+<script>
+    let gameData = {
+        score: 0,
+        clickPower: 1,
+        autoIncome: 0,
+        records: []
+    };
+
+    const prices = {
+        click: 15,
+        auto: 50,
+        mega: 500
+    };
+
+    function loadGame() {
+        const saved = localStorage.getItem('clickerSave');
+        if (saved) {
+            gameData = JSON.parse(saved);
+        }
+        updateUI();
+        renderRecords();
+    }
+
+    function saveGame() {
+        localStorage.setItem('clickerSave', JSON.stringify(gameData));
+    }
+
+    function updateUI() {
+        document.getElementById('score').innerText = Math.floor(gameData.score);
+        document.getElementById('clickPower').innerText = gameData.clickPower;
+        document.getElementById('autoIncome').innerText = gameData.autoIncome;
+
+        document.getElementById('buyClick').disabled = gameData.score < prices.click;
+        document.getElementById('buyClick').innerText = prices.click + ' 💰';
+
+        document.getElementById('buyAuto').disabled = gameData.score < prices.auto;
+        document.getElementById('buyAuto').innerText = prices.auto + ' 💰';
+
+        document.getElementById('buyMega').disabled = gameData.score < prices.mega;
+        document.getElementById('buyMega').innerText = prices.mega + ' 💰';
+    }
+
+    document.getElementById('clickBtn').addEventListener('click', function(e) {
+        gameData.score += gameData.clickPower;
+
+        const floatText = document.createElement('div');
+        floatText.className = 'floating-text';
+        floatText.innerText = '+' + gameData.clickPower;
+
+        const rect = e.target.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+
+        floatText.style.left = x + 'px';
+        floatText.style.top = y + 'px';
+
+        e.target.appendChild(floatText);
+
+        setTimeout(function() { floatText.remove(); }, 1000);
+
+        updateUI();
+        saveGame();
+    });
+
+    function buyUpgrade(type) {
+        if (type === 'click' && gameData.score >= prices.click) {
+            gameData.score -= prices.click;
+            gameData.clickPower += 1;
+            prices.click = Math.floor(prices.click * 1.5);
+        } else if (type === 'auto' && gameData.score >= prices.auto) {
+            gameData.score -= prices.auto;
+            gameData.autoIncome += 1;
+            prices.auto = Math.floor(prices.auto * 1.4);
+        } else if (type === 'mega' && gameData.score >= prices.mega) {
+            gameData.score -= prices.mega;
+            gameData.autoIncome += 10;
+            prices.mega = Math.floor(prices.mega * 1.4);
+        }
+        updateUI();
+        saveGame();
+    }
+
+    setInterval(function() {
+        if (gameData.autoIncome > 0) {
+            gameData.score += gameData.autoIncome;
+            updateUI();
+            saveGame();
+        }
+    }, 1000);
+
+    function saveRecord() {
+        const nameInput = document.getElementById('playerName');
+        const name = nameInput.value.trim() || "Аноним";
+
+        if (gameData.score === 0) {
+            alert("Сначала заработайте хоть немного монет!");
+            return;
+        }
+
+        const newRecord = {
+            name: name,
+            score: Math.floor(gameData.score),
+            date: new Date().toLocaleDateString()
+        };
+
+        gameData.records.push(newRecord);
+        gameData.records.sort(function(a, b) { return b.score - a.score; });
+        gameData.records = gameData.records.slice(0, 10);
+
+        nameInput.value = '';
+        renderRecords();
+        saveGame();
+        alert("Рекорд сохранен!");
+    }
+
+    function renderRecords() {
+        const list = document.getElementById('recordsList');
+        list.innerHTML = '';
+
+        if (gameData.records.length === 0) {
+            list.innerHTML = '<li style="text-align:center; color:#999;">Пока нет рекордов</li>';
+            return;
+        }
+
+        gameData.records.forEach(function(rec, index) {
+            const li = document.createElement('li');
+            li.className = 'record-item';
+            li.innerHTML = '<span>#' + (index + 1) + ' ' + rec.name + ' <small>(' + rec.date + ')</small></span>' +
+                           '<span>' + rec.score + ' 💰</span>';
+            list.appendChild(li);
+        });
+    }
+
+    function resetGame() {
+        if(confirm("Вы уверены? Весь прогресс и рекорды будут удалены!")) {
+            localStorage.removeItem('clickerSave');
+            location.reload();
+        }
+    }
+
+    loadGame();
+</script>
+
+</body>
+</html>

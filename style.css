@@ -1,0 +1,103 @@
+.container {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    padding: 2rem;
+    border-radius: 15px;
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+    max-width: 500px;
+    width: 90%;
+}
+h1 {
+    margin-bottom: 10px;
+    font-size: 2.5rem;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+}
+p {
+    margin-bottom: 20px;
+    font-size: 1.1rem;
+}
+#score {
+    font-size: 3rem;
+    font-weight: bold;
+    margin: 20px 0;
+    color: #ffd700;
+    text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+}
+button {
+    background: linear-gradient(45deg, #ff6b6b, #f06595);
+    border: none;
+    padding: 15px 30px;
+    color: white;
+    font-size: 1.2rem;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: transform 0.1s, box-shadow 0.3s;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    margin: 5px;
+}
+button:active {
+    transform: scale(0.95);
+}
+button:hover {
+    box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+}
+.upgrades {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.upgrade-btn {
+    background: linear-gradient(45deg, #4facfe, #00f2fe);
+    font-size: 1rem;
+    padding: 10px 20px;
+}
+.leaderboard {
+    margin-top: 30px;
+    text-align: left;
+    background: rgba(0, 0, 0, 0.2);
+    padding: 15px;
+    border-radius: 10px;
+}
+.leaderboard h3 {
+    text-align: center;
+    margin-top: 0;
+}
+#records-list {
+    list-style: none;
+    padding: 0;
+    max-height: 200px;
+    overflow-y: auto;
+}
+#records-list li {
+    background: rgba(255, 255, 255, 0.1);
+    margin: 5px 0;
+    padding: 8px;
+    border-radius: 5px;
+    display: flex;
+    justify-content: space-between;
+}
+input {
+    padding: 10px;
+    border-radius: 5px;
+    border: none;
+    margin-right: 5px;
+    width: 60%;
+}
+.save-btn {
+    background: linear-gradient(45deg, #43e97b, #38f9d7);
+    padding: 10px 15px;
+    font-size: 1rem;
+}
+/* Анимация клика */
+.click-effect {
+    position: absolute;
+    font-weight: bold;
+    color: #fff;
+    pointer-events: none;
+    animation: floatUp 1s ease-out forwards;
+}
+@keyframes floatUp {
+    0% { transform: translateY(0); opacity: 1; }
+    100% { transform: translateY(-50px); opacity: 0; }
+}
